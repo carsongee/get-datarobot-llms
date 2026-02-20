@@ -2,7 +2,7 @@
 
 ## Installation Verification
 
-After installing the package with `pip install .` or `pip install -e .`, verify the installation:
+After installing the package with `uv tool install .` or `uv pip install -e .` for development, verify the installation:
 
 1. **Check the command is accessible:**
    ```bash
@@ -49,6 +49,42 @@ Once installed, the plugin should be automatically discovered by the DataRobot C
    ```bash
    dr-get-llms
    ```
+
+## Command-Line Options
+
+The command supports various options to customize output:
+
+### Basic usage (default shows only active models):
+```bash
+dr get-llms
+```
+
+### Show all fields:
+```bash
+dr get-llms --show-all
+```
+
+### Show specific fields:
+```bash
+dr get-llms --show-provider --show-context-size
+```
+
+### Include inactive models:
+```bash
+dr get-llms --no-filter-active
+```
+
+### Show deprecated models with replacement info:
+```bash
+dr get-llms --show-deprecated --show-suggested-replacement
+```
+
+### Combine multiple options:
+```bash
+dr get-llms --show-all --no-filter-active --show-deprecated
+```
+
+Run `dr get-llms --help` or `dr-get-llms --help` to see all available options.
 
 ## Troubleshooting
 
