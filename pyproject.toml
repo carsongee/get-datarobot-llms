@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dr-get-llms"
+version = "0.1.0"
+description = "Lists all available models in the LLM gateway"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+dependencies = [
+    "datarobot",
+    "tabulate",
+]
+
+[project.scripts]
+dr-get-llms = "dr_get_llms.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dr_get_llms"]
