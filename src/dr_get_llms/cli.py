@@ -1,8 +1,11 @@
 """CLI entrypoint for dr-get-llms plugin."""
 
 import argparse
+import itertools
 import json
 import sys
+import threading
+import time
 
 
 def print_manifest():
@@ -16,12 +19,41 @@ def print_manifest():
     print(json.dumps(manifest, indent=2))
 
 
+class Spinner:
+    """Simple terminal spinner for indicating progress."""
+
+    def __init__(self, message="Loading"):
+        self._message = message
+        self._stop_event = threading.Event()
+        self._thread = None
+
+    def __enter__(self):
+        self._thread = threading.Thread(target=self._spin, daemon=True)
+        self._thread.start()
+        return self
+
+    def __exit__(self, *args):
+        self._stop_event.set()
+        self._thread.join()
+        sys.stderr.write("\r\033[K")
+        sys.stderr.flush()
+
+    def _spin(self):
+        for char in itertools.cycle("⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"):
+            if self._stop_event.is_set():
+                break
+            sys.stderr.write(f"\r{char} {self._message}...")
+            sys.stderr.flush()
+            time.sleep(0.08)
+
+
 def list_models(args):
     """List all available LLM Gateway models."""
     import datarobot
 
-    catalog = datarobot.genai.LLMGatewayCatalog()
-    all_models = catalog.list_as_dict()
+    with Spinner("Fetching models from DataRobot"):
+        catalog = datarobot.genai.LLMGatewayCatalog()
+        all_models = catalog.list_as_dict()
 
     # Apply filters
     models = []
